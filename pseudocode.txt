@@ -1,0 +1,33 @@
+Input : Parity-check matrix 𝐇, syndrome 𝝈, error probabilities 𝐩, number of solutions to be found S, maximum number of legs of the relay R, maximum number of iterations per leg Tr, and memory strengths for each leg {𝜸⁢(r)}r∈[R].
+Output : Solution found, Estimated error 𝐞^
+1 λj,Mj⁢(0)←log⁡1−pjpj, r←0,s←0,𝐞^←∅,ω𝐞^←∞;
+2 for r≤R do        // Run DMem-BP
+3       Λj⁢(0)←νj→i⁢(0)←λj;
+4       for t≤Tr do
+5             Λj⁢(t)←(1−γj⁢(r))⁢Λj⁢(0)+γj⁢(r)⁢Mj⁢(t−1);
+6             Compute μi→j⁢(t) // via Eq. (1);
+7             Compute νj→i⁢(t) // via Eq. (2);
+8             Compute Mj⁢(t) // via Eq. (3);
+9             e^j⁢(t)←HD⁢(Mj⁢(t));
+10             if 𝐇⁢𝐞^⁢(t)=𝛔 then
+11                   // BP converged ;
+12                   ωr←w⁢(𝐞^)=∑je^j⁢λj;
+13                   s←s+1;
+14                   if ωr<ω𝐞^ then
+15                         𝐞^←𝐞^⁢(t);
+16                         ω𝐞^←ωr;
+17
+18                   end if
+19                  𝐛𝐫𝐞𝐚𝐤; // Continue to next leg
+20             end if
+21            t←t+1;
+22
+23       end for
+24      if s=S then
+25             𝐛𝐫𝐞𝐚𝐤; // Found enough solutions
+26       end if       // Reuse final marginals for the next leg
+27       Mj⁢(0)←Mj⁢(t);
+28       r←r+1;
+29
+30 end for
+31 𝐫𝐞𝐭𝐮𝐫𝐧 (s>0), 𝐞^;
